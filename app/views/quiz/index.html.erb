@@ -1,0 +1,74 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+  <div class="max-w-4xl mx-auto px-4">
+    <!-- ヘッダー -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold text-gray-800 mb-4">
+        🚀 Salesforce学習クイズ
+      </h1>
+      <p class="text-lg text-gray-600">
+        Salesforce認定試験の対策問題で知識をテストしよう！
+      </p>
+    </div>
+
+    <!-- 統計情報 -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center">
+          <div class="text-3xl font-bold text-blue-600"><%= @total_questions %></div>
+          <div class="text-gray-600">総問題数</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-green-600"><%= @categories.count %></div>
+          <div class="text-gray-600">カテゴリー数</div>
+        </div>
+        <div class="text-center">
+          <div class="text-3xl font-bold text-purple-600"><%= @difficulties.count %></div>
+          <div class="text-gray-600">難易度レベル</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- フィルター設定 -->
+    <%= form_with url: quiz_path(1), method: :get, local: true, class: "bg-white rounded-lg shadow-lg p-6 mb-8" do |form| %>
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">📚 学習設定</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">カテゴリー</label>
+          <%= form.select :category, 
+                options_for_select([['すべて', '']] + @categories.map { |c| [c, c] }), 
+                {}, 
+                { class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">難易度</label>
+          <%= form.select :difficulty, 
+                options_for_select([['すべて', '']] + @difficulties.map { |d| [d, d] }), 
+                {}, 
+                { class: "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" } %>
+        </div>
+      </div>
+      
+      <div class="mt-6 text-center">
+        <%= form.submit "🎯 クイズを開始", 
+              class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition duration-200 transform hover:scale-105" %>
+      </div>
+    <% end %>
+
+    <!-- カテゴリー一覧 -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">📋 利用可能なカテゴリー</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <% @categories.each do |category| %>
+          <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <h3 class="font-medium text-gray-800"><%= category %></h3>
+            <p class="text-sm text-gray-600 mt-1">
+              <%= Question.by_category(category).count %>問
+            </p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

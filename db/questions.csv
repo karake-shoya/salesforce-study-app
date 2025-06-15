@@ -1,0 +1,2 @@
+id,question,option_a,option_b,option_c,option_d,correct_answers,explanation,category,difficulty
+1,"未管理パッケージを作成する理由は何ですか？ 答えを2つ選んでください","AppExchangeでのオープンソースプロジェクトを配布する","AppExchangeで販売するアプリケーションを公開する","Developer Edition環境からデプロイする","アップグレード可能なコンポーネントを別のSalesforce組織に配布する","A,C","未管理パッケージはオープンソースプロジェクトの配布に使用され、Developer Editionから本番環境への移行に必要です。","Platformアプリケーションビルダー","中級" 
