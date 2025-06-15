@@ -5,7 +5,7 @@ class Question < ApplicationRecord
   validates :category, presence: true
 
   def options
-    [ option_a, option_b, option_c, option_d ].compact
+    [ option_a, option_b, option_c, option_d, option_e ].compact
   end
 
   def correct_answer_array

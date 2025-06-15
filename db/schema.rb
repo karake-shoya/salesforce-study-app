@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_15_032944) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_15_120530) do
   create_table "questions", force: :cascade do |t|
     t.text "question"
     t.string "option_a"
@@ -23,5 +23,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_15_032944) do
     t.string "difficulty"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "option_e"
   end
 end

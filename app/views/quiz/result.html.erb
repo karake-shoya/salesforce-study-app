@@ -68,7 +68,7 @@
 
             <!-- 選択肢と回答 -->
             <div class="grid grid-cols-1 gap-2 mb-4">
-              <% ['A', 'B', 'C', 'D'].each do |option_letter| %>
+              <% ['A', 'B', 'C', 'D', 'E'].each do |option_letter| %>
                 <% option_text = result[:question].send("option_#{option_letter.downcase}") %>
                 <% next if option_text.blank? %>
                 

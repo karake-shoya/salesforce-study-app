@@ -36,7 +36,7 @@
         <%= hidden_field_tag :difficulty, params[:difficulty] %>
         
         <div class="space-y-4 mb-8">
-          <% ['A', 'B', 'C', 'D'].each_with_index do |option_letter, index| %>
+          <% ['A', 'B', 'C', 'D', 'E'].each_with_index do |option_letter, index| %>
             <% option_text = @question.send("option_#{option_letter.downcase}") %>
             <% next if option_text.blank? %>
             
