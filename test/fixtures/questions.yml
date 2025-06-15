@@ -1,23 +1,23 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  question: MyText
-  option_a: MyString
-  option_b: MyString
-  option_c: MyString
-  option_d: MyString
-  correct_answers: MyString
-  explanation: MyText
-  category: MyString
-  difficulty: MyString
+  question: "テスト問題1です。正しい答えを選んでください。"
+  option_a: "選択肢A"
+  option_b: "選択肢B"
+  option_c: "選択肢C"
+  option_d: "選択肢D"
+  correct_answers: "A"
+  explanation: "これはテスト用の解説です。"
+  category: "テストカテゴリー"
+  difficulty: "初級"
 
 two:
-  question: MyText
-  option_a: MyString
-  option_b: MyString
-  option_c: MyString
-  option_d: MyString
-  correct_answers: MyString
-  explanation: MyText
-  category: MyString
-  difficulty: MyString
+  question: "テスト問題2です。複数選択問題です。"
+  option_a: "選択肢A"
+  option_b: "選択肢B"
+  option_c: "選択肢C"
+  option_d: "選択肢D"
+  correct_answers: "A,C"
+  explanation: "これは複数選択のテスト問題です。"
+  category: "テストカテゴリー"
+  difficulty: "中級"
