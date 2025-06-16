@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     end
     collection do
       get :result
+      get :clear_session
     end
   end
 

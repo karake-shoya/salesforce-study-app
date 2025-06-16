@@ -28,7 +28,8 @@ class QuizControllerTest < ActionDispatch::IntegrationTest
       answers: [ "A" ]
     }
     assert_response :redirect
-    assert_redirected_to feedback_quiz_url(1)
+    # URLパラメータ付きのリダイレクトをチェック
+    assert_match %r{/quiz/1/feedback\?}, response.location
   end
 
   test "should post answer with multiple selections" do
@@ -40,28 +41,29 @@ class QuizControllerTest < ActionDispatch::IntegrationTest
     }
     assert_response :redirect
     # リダイレクト先のパスパターンをチェック（IDは動的なので）
-    assert_match %r{/quiz/\d+/feedback}, response.location
+    assert_match %r{/quiz/1/feedback\?}, response.location
   end
 
-  test "should get feedback with valid session data" do
-    # まずanswerアクションでセッションを設定
-    post answer_quiz_url(@question), params: {
+  test "should get feedback with URL parameters" do
+    get feedback_quiz_url(@question), params: {
       question_number: 1,
+      selected_answers: "A",
+      correct: "1",
       category: "テストカテゴリー",
-      difficulty: "初級",
-      answers: [ "A" ]
+      difficulty: "初級"
     }
-
-    # feedbackページにアクセス
-    get feedback_quiz_url(1)
     assert_response :success
   end
 
-  test "should redirect to index when feedback session data is missing" do
-    get feedback_quiz_url(1)
+  test "should redirect to index when feedback question not found" do
+    get feedback_quiz_url(@question), params: {
+      question_number: 999,
+      selected_answers: "A",
+      correct: "1"
+    }
     assert_response :redirect
     assert_redirected_to quiz_index_url
-    assert_equal "フィードバック情報が見つかりませんでした", flash[:alert]
+    assert_equal "問題が見つかりませんでした", flash[:alert]
   end
 
   test "should get result" do
@@ -82,9 +84,7 @@ class QuizControllerTest < ActionDispatch::IntegrationTest
     get result_quiz_index_url
     assert_response :success
 
-    # 再度feedbackにアクセスしてセッションがクリアされていることを確認
-    get feedback_quiz_url(1)
-    assert_response :redirect
-    assert_redirected_to quiz_index_url
+    # セッションがクリアされていることを確認（quiz_resultsのみ）
+    assert_nil session[:quiz_results]
   end
 end
