@@ -1,0 +1,110 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+  <div class="max-w-4xl mx-auto px-4">
+    <!-- プログレスバー -->
+    <div class="mb-8">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium text-gray-700">問題 <%= @question_number %> / <%= @total_questions %></span>
+        <span class="text-sm font-medium text-gray-700"><%= ((@question_number.to_f / @total_questions) * 100).round(1) %>%</span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-2">
+        <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" 
+             style="width: <%= ((@question_number.to_f / @total_questions) * 100).round(1) %>%"></div>
+      </div>
+    </div>
+
+    <!-- 結果カード -->
+    <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+      <!-- 正誤判定ヘッダー -->
+      <div class="flex items-center justify-center mb-6">
+        <% if @is_correct %>
+          <div class="text-4xl mr-4">🎉</div>
+          <div>
+            <h2 class="text-2xl font-bold text-green-600">正解！</h2>
+          </div>
+        <% else %>
+          <div class="text-4xl mr-4">😅</div>
+          <div>
+            <h2 class="text-2xl font-bold text-red-600">不正解</h2>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- カテゴリーと難易度 -->
+      <div class="flex flex-wrap gap-2 mb-6">
+        <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+          <%= @question.category %>
+        </span>
+        <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded">
+          <%= @question.difficulty %>
+        </span>
+      </div>
+
+      <!-- 問題文 -->
+      <div class="mb-6">
+        <h3 class="text-lg font-medium text-gray-800 mb-3">問題</h3>
+        <p class="text-gray-700 leading-relaxed">
+          <%= simple_format(@question.question) %>
+        </p>
+      </div>
+
+      <!-- 選択肢と回答 -->
+      <div class="mb-6">
+        <h3 class="text-lg font-medium text-gray-800 mb-3">選択肢と回答</h3>
+        <div class="space-y-3">
+          <% ['A', 'B', 'C', 'D', 'E'].each do |option_letter| %>
+            <% option_text = @question.send("option_#{option_letter.downcase}") %>
+            <% next if option_text.blank? %>
+            
+            <div class="flex items-center p-3 rounded-lg border
+                 <%= @question.correct_answer_array.include?(option_letter) ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200' %>
+                 <%= @selected_answers.include?(option_letter) && !@question.correct_answer_array.include?(option_letter) ? 'bg-red-50 border-red-200' : '' %>">
+              
+              <span class="mr-3 text-2xl">
+                <% if @selected_answers.include?(option_letter) %>
+                  <% if @question.correct_answer_array.include?(option_letter) %>
+                    ✅ <!-- 選択した正解 -->
+                  <% else %>
+                    ❌ <!-- 選択した不正解 -->
+                  <% end %>
+                <% elsif @question.correct_answer_array.include?(option_letter) %>
+                  ⭕ <!-- 選択しなかった正解 -->
+                <% else %>
+                  ⚪ <!-- 選択しなかった選択肢 -->
+                <% end %>
+              </span>
+              
+              <div class="flex-1">
+                <span class="font-medium text-gray-700 mr-2"><%= option_letter %>.</span>
+                <span class="text-gray-800"><%= option_text %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- 解説 -->
+      <% if @question.explanation.present? %>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+          <h3 class="text-lg font-medium text-blue-800 mb-3">💡 解説</h3>
+          <div class="text-blue-700 leading-relaxed">
+            <%= simple_format(@question.explanation) %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- ナビゲーションボタン -->
+      <div class="flex justify-between items-center">
+        <%= link_to "🏠 ホームに戻る", quiz_index_path, 
+              class: "bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-200" %>
+        
+        <% if @has_next_question %>
+          <%= link_to "次の問題へ →", quiz_path(1, question_number: @next_question_number, **@filter_params), 
+                class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200" %>
+        <% else %>
+          <%= link_to "結果を見る 🎯", result_quiz_index_path, 
+                class: "bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition duration-200" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div> 

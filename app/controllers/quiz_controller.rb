@@ -1,5 +1,5 @@
 class QuizController < ApplicationController
-  before_action :set_question, only: [ :show, :answer ]
+  before_action :set_question, only: [ :show ]
 
   def index
     @categories = Question.distinct.pluck(:category).compact
@@ -25,25 +25,63 @@ class QuizController < ApplicationController
   end
 
   def answer
-    selected_answers = params[:answers] || []
-    is_correct = @question.is_correct?(selected_answers)
+    answer_params = params.permit(:question_number, :category, :difficulty, answers: [])
+    selected_answers = answer_params[:answers] || []
+    question_number = answer_params[:question_number]&.to_i || 1
+
+    # 現在の問題を取得
+    question = filtered_questions.offset(question_number - 1).first
+
+    # 正誤判定
+    is_correct = question.is_correct?(selected_answers)
 
     # セッションに結果を保存
     session[:quiz_results] ||= []
     session[:quiz_results] << {
-      question_id: @question.id,
+      question_id: question.id,
       selected_answers: selected_answers,
       correct: is_correct
     }
 
-    question_number = params[:question_number]&.to_i || 1
-    next_question = question_number + 1
+    # セッションに現在の回答情報を保存（feedback用）
+    session[:current_feedback] = {
+      question_id: question.id,
+      selected_answers: selected_answers,
+      correct: is_correct,
+      question_number: question_number,
+      category: answer_params[:category],
+      difficulty: answer_params[:difficulty]
+    }
 
-    if next_question > filtered_questions.count
-      redirect_to result_quiz_index_path
-    else
-      redirect_to quiz_path(id: next_question, **filter_params)
+    respond_to do |format|
+      format.html { redirect_to feedback_quiz_path(question.id) }
+      format.turbo_stream { redirect_to feedback_quiz_path(question.id) }
     end
+  end
+
+  def feedback
+    @feedback_data = session[:current_feedback]
+
+    unless @feedback_data
+      redirect_to quiz_index_path, alert: "フィードバック情報が見つかりませんでした"
+      return
+    end
+
+    @question = Question.find(@feedback_data["question_id"])
+    @selected_answers = @feedback_data["selected_answers"]
+    @is_correct = @feedback_data["correct"]
+    @question_number = @feedback_data["question_number"]
+    @total_questions = filtered_questions.count
+
+    # 次の問題の情報
+    @next_question_number = @question_number + 1
+    @has_next_question = @next_question_number <= @total_questions
+
+    # フィルターパラメータ
+    @filter_params = {
+      category: @feedback_data["category"],
+      difficulty: @feedback_data["difficulty"]
+    }.compact
   end
 
   def result
@@ -64,6 +102,7 @@ class QuizController < ApplicationController
 
     # セッションをクリア
     session[:quiz_results] = nil
+    session[:current_feedback] = nil
   end
 
   private

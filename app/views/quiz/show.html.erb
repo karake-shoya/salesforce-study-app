@@ -25,12 +25,12 @@
       </div>
 
       <!-- 問題文 -->
-      <h2 class="text-xl font-semibold text-gray-800 mb-6 leading-relaxed">
+      <h2 class="text-lg font-normal text-gray-800 mb-6 leading-relaxed">
         <%= simple_format(@question.question) %>
       </h2>
 
       <!-- 回答フォーム -->
-      <%= form_with url: answer_quiz_path(@question), method: :post, local: true do |form| %>
+      <%= form_with url: answer_quiz_path(@question), method: :post do |form| %>
         <%= hidden_field_tag :question_number, @question_number %>
         <%= hidden_field_tag :category, params[:category] %>
         <%= hidden_field_tag :difficulty, params[:difficulty] %>
