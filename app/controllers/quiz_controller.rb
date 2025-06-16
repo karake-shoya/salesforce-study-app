@@ -54,8 +54,8 @@ class QuizController < ApplicationController
     }
 
     respond_to do |format|
-      format.html { redirect_to feedback_quiz_path(question.id) }
-      format.turbo_stream { redirect_to feedback_quiz_path(question.id) }
+      format.html { redirect_to feedback_quiz_path(1) }
+      format.turbo_stream { redirect_to feedback_quiz_path(1) }
     end
   end
 
@@ -67,10 +67,12 @@ class QuizController < ApplicationController
       return
     end
 
-    @question = Question.find(@feedback_data["question_id"])
+    # セッションから問題番号を取得して、正しい問題を取得
+    @question_number = @feedback_data["question_number"]
+    @question = filtered_questions.offset(@question_number - 1).first
+
     @selected_answers = @feedback_data["selected_answers"]
     @is_correct = @feedback_data["correct"]
-    @question_number = @feedback_data["question_number"]
     @total_questions = filtered_questions.count
 
     # 次の問題の情報
