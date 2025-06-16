@@ -28,7 +28,7 @@ class QuizControllerTest < ActionDispatch::IntegrationTest
       answers: [ "A" ]
     }
     assert_response :redirect
-    assert_redirected_to feedback_quiz_url(@question)
+    assert_redirected_to feedback_quiz_url(1)
   end
 
   test "should post answer with multiple selections" do
@@ -53,12 +53,12 @@ class QuizControllerTest < ActionDispatch::IntegrationTest
     }
 
     # feedbackページにアクセス
-    get feedback_quiz_url(@question)
+    get feedback_quiz_url(1)
     assert_response :success
   end
 
   test "should redirect to index when feedback session data is missing" do
-    get feedback_quiz_url(@question)
+    get feedback_quiz_url(1)
     assert_response :redirect
     assert_redirected_to quiz_index_url
     assert_equal "フィードバック情報が見つかりませんでした", flash[:alert]
@@ -83,7 +83,7 @@ class QuizControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     # 再度feedbackにアクセスしてセッションがクリアされていることを確認
-    get feedback_quiz_url(@question)
+    get feedback_quiz_url(1)
     assert_response :redirect
     assert_redirected_to quiz_index_url
   end
